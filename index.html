@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Odontológico</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        header {
+            background: linear-gradient(to right, #00838f, #00bcd4);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+        }
+        
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .screen {
+            display: none;
+            padding: 30px;
+        }
+        
+        #start-screen {
+            display: block;
+            text-align: center;
+        }
+        
+        .btn {
+            background-color: #00838f;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s;
+            display: inline-block;
+            box-shadow: 0 4px 8px rgba(0, 131, 143, 0.3);
+        }
+        
+        .btn:hover {
+            background-color: #006064;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 131, 143, 0.4);
+        }
+        
+        .option-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            margin: 10px 0;
+            padding: 15px 20px;
+            background-color: #f8f8f8;
+            color: #333;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+        
+        .option-btn:hover {
+            background-color: #e1f5fe;
+            border-color: #00838f;
+        }
+        
+        .option-btn.selected {
+            background-color: #b3e5fc;
+            border-color: #00838f;
+            font-weight: bold;
+        }
+        
+        .question-container {
+            margin-bottom: 25px;
+        }
+        
+        .question-number {
+            color: #00838f;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #006064;
+            font-weight: 500;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        
+        .score-container {
+            text-align: center;
+            margin: 25px 0;
+        }
+        
+        .score {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #00838f;
+            margin: 15px 0;
+        }
+        
+        .score-message {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .clinic-info {
+            background-color: #e0f7fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border-left: 5px solid #00838f;
+        }
+        
+        .clinic-info h3 {
+            color: #00838f;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .clinic-details {
+            margin: 15px 0;
+        }
+        
+        .clinic-details p {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .clinic-details i {
+            margin-right: 10px;
+            color: #00838f;
+        }
+        
+        .share-container {
+            text-align: center;
+            margin: 25px 0;
+        }
+        
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .share-btn {
+            background-color: #25D366;
+            min-width: 180px;
+        }
+        
+        .share-btn.instagram {
+            background-color: #E1306C;
+        }
+        
+        .share-btn.download {
+            background-color: #00838f;
+        }
+        
+        .result-canvas {
+            display: none;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+            padding: 15px;
+            background-color: #f5f5f5;
+        }
+        
+        .progress-bar {
+            height: 12px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #00838f, #00bcd4);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #00838f;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            header {
+                padding: 20px 15px;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .screen {
+                padding: 20px;
+            }
+            
+            .question-text {
+                font-size: 1.1rem;
+            }
+            
+            .share-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .share-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quiz Odontológico</h1>
+            <p>Teste seus conhecimentos sobre saúde bucal!</p>
+        </header>
+        
+        <div id="start-screen" class="screen">
+            <div class="logo">
+                <i class="fas fa-tooth"></i>
+            </div>
+            <h2>Bem-vindo ao Quiz Odontológico do Dr Ednando Oliveira</h2>
+            <p>Responda as perguntas e teste seus conhecimentos sobre saúde bucal. No final, você verá sua pontuação e poderá compartilhar o resultado!</p>
+            <button id="start-btn" class="btn">Iniciar Quiz</button>
+        </div>
+        
+        <div id="quiz-screen" class="screen">
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div class="question-container">
+                <div class="question-number" id="question-number">Pergunta 1 de 10</div>
+                <div class="question-text" id="question-text"></div>
+            </div>
+            <div id="options-container"></div>
+            <div class="navigation">
+                <button id="prev-btn" class="btn" disabled><i class="fas fa-arrow-left"></i> Anterior</button>
+                <button id="next-btn" class="btn">Próxima <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        
+        <div id="results-screen" class="screen">
+            <div class="score-container">
+                <h2>Quiz Concluído!</h2>
+                <p class="score-message">Sua pontuação final:</p>
+                <div class="score" id="final-score">0/10</div>
+                
+                <div id="score-message"></div>
+            </div>
+            
+            <div class="clinic-info">
+                <h3>Consulte-se com Dentista!</h3>
+                <p>Precisa de cuidados profissionais? Agende uma consulta no nosso consultório!</p>
+                
+                <div class="clinic-details">
+                    <p><i class="fas fa-user-md"></i> <strong>Dr. Ednando Oliveira Odontologia Integrada</strong></p>
+                    <p><i class="fas fa-phone"></i> Whatsapp/Telefone: (85) 99414-6080/(85) 3219-1636</p>
+                    <p><i class="fas fa-envelope"></i> Email: edodontointegrada@gmail.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Endereço: Rua 1149, 27 - Conjunto Ceará I - Fortaleza/CE</p>
+                </div>
+            </div>
+            
+            <div class="share-container">
+                <p>Compartilhe seu resultado:</p>
+                <div class="share-buttons">
+                    <button id="share-whatsapp" class="btn share-btn">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </button>
+                    <button id="share-instagram" class="btn share-btn instagram">
+                        <i class="fab fa-instagram"></i> Instagram
+                    </button>
+                    <button id="download-btn" class="btn share-btn download">
+                        <i class="fas fa-download"></i> Baixar Resultado
+                    </button>
+                    <button id="restart-btn" class="btn">
+                        <i class="fas fa-redo"></i> Jogar Novamente
+                    </button>
+                </div>
+            </div>
+            
+            <canvas id="result-canvas" class="result-canvas" width="600" height="400"></canvas>
+        </div>
+        
+        <footer>
+            <p>Dr. Ednando Oliveira Odontologia Integrada © 2025 - Todos os direitos reservados</p>
+        </footer>
+    </div>
+
+    <script>
+        // Perguntas e respostas atualizadas
+        const questions = [
+            {
+                question: "Com que frequência devo trocar minha escova de dentes?",
+                options: [
+                    "A cada 6 meses",
+                    "A cada 3 meses ou após período de doença (ex: gripe)",
+                    "Apenas quando as cerdas estiverem desgastadas",
+                    "Uma vez por ano"
+                ],
+                correct: 1
+            },
+            {
+                question: "Quantas vezes ao dia devo escovar os dentes?",
+                options: [
+                    "Uma vez ao dia",
+                    "Duas vezes ao dia",
+                    "Três vezes ao dia e/ou após as refeições",
+                    "Apenas antes de dormir"
+                ],
+                correct: 2
+            },
+            {
+                question: "O que causa cáries dentárias?",
+                options: [
+                    "Comer muito doce",
+                    "Bactérias que produzem ácidos a partir de restos de alimentos",
+                    "Não escovar os dentes com força suficiente",
+                    "Beber água gelada"
+                ],
+                correct: 1
+            },
+            {
+                question: "O fio dental deve ser usado:",
+                options: [
+                    "Apenas quando sentimos algo entre os dentes",
+                    "Uma vez por semana",
+                    "Todos os dias, antes da escovação",
+                    "Todos os dias, preferencialmente antes de dormir"
+                ],
+                correct: 2
+            },
+            {
+                question: "Qual o principal objetivo da raspagem de tártaro feita no dentista?",
+                options: [
+                    "Substituir a escovação",
+                    "Clarear os dentes",
+                    "Complementar a higiene bucal e prevenir o aparecimento de doenças",
+                    "Serve só pro dentista ganhar dinheiro"
+                ],
+                correct: 2
+            },
+            {
+                question: "Qual é a principal causa do mau hálito?",
+                options: [
+                    "Comer alho e cebola",
+                    "Respirar pela boca",
+                    "Bactérias na língua e gengivas",
+                    "Estômago vazio"
+                ],
+                correct: 2
+            },
+            {
+                question: "O que é bruxismo?",
+                options: [
+                    "Inflamação na gengiva",
+                    "Sensibilidade nos dentes",
+                    "Ranger ou apertar os dentes involuntariamente",
+                    "Acúmulo de tártaro"
+                ],
+                correct: 2
+            },
+            {
+                question: "Qual a importância do flúor para os dentes?",
+                options: [
+                    "Clareia os dentes",
+                    "Elimina completamente as bactérias",
+                    "Fortalece o esmalte e previne cáries",
+                    "Apenas deixa o hálito fresco"
+                ],
+                correct: 2
+            },
+            {
+                question: "O que é a gengivite?",
+                options: [
+                    "Inflamação dos ossos que sustentam os dentes",
+                    "Erosão do esmalte dos dentes",
+                    "Formação de cáries entre os dentes",
+                    "Inflamação da gengiva causada por placa bacteriana"
+                ],
+                correct: 3
+            },
+            {
+                question: "O que acontece se você não remover a placa bacteriana todos os dias?",
+                options: [
+                    "Ela some sozinha",
+                    "Nada acontece",
+                    "Seus dentes ficam mais brancos",
+                    "Ela vira tártaro, que só o dentista pode remover"
+                ],
+                correct: 3
+            }
+        ];
+
+        // Variáveis do jogo
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = new Array(questions.length).fill(-1);
+
+        // Elementos DOM
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const startBtn = document.getElementById('start-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const questionNumber = document.getElementById('question-number');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const finalScore = document.getElementById('final-score');
+        const progressBar = document.getElementById('progress');
+        const restartBtn = document.getElementById('restart-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const shareWhatsapp = document.getElementById('share-whatsapp');
+        const shareInstagram = document.getElementById('share-instagram');
+        const canvas = document.getElementById('result-canvas');
+        const scoreMessage = document.getElementById('score-message');
+
+        // Iniciar o quiz
+        startBtn.addEventListener('click', startQuiz);
+        restartBtn.addEventListener('click', startQuiz);
+        
+        function startQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            userAnswers.fill(-1);
+            startScreen.style.display = 'none';
+            resultsScreen.style.display = 'none';
+            quizScreen.style.display = 'block';
+            showQuestion();
+            updateProgressBar();
+        }
+
+        // Mostrar pergunta atual
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            questionNumber.textContent = `Pergunta ${currentQuestion + 1} de ${questions.length}`;
+            questionText.textContent = question.question;
+            
+            optionsContainer.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.classList.add('option-btn');
+                
+                if (userAnswers[currentQuestion] === index) {
+                    button.classList.add('selected');
+                }
+                
+                button.addEventListener('click', () => selectOption(index));
+                optionsContainer.appendChild(button);
+            });
+            
+            // Atualizar estado dos botões de navegação
+            prevBtn.disabled = currentQuestion === 0;
+            nextBtn.textContent = currentQuestion === questions.length - 1 ? 'Finalizar' : 'Próxima';
+        }
+
+        // Selecionar uma opção
+        function selectOption(index) {
+            userAnswers[currentQuestion] = index;
+            
+            // Atualizar visualmente a seleção
+            const options = optionsContainer.querySelectorAll('.option-btn');
+            options.forEach((btn, i) => {
+                if (i === index) {
+                    btn.classList.add('selected');
+                } else {
+                    btn.classList.remove('selected');
+                }
+            });
+        }
+
+        // Navegação entre perguntas
+        nextBtn.addEventListener('click', () => {
+            if (userAnswers[currentQuestion] === -1) {
+                alert("Por favor, selecione uma resposta antes de continuar.");
+                return;
+            }
+            
+            // Verificar resposta
+            if (userAnswers[currentQuestion] === questions[currentQuestion].correct) {
+                score++;
+            }
+            
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                finishQuiz();
+            }
+            updateProgressBar();
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+            }
+            updateProgressBar();
+        });
+
+        // Finalizar o quiz e mostrar resultados
+        function finishQuiz() {
+            quizScreen.style.display = 'none';
+            resultsScreen.style.display = 'block';
+            finalScore.textContent = `${score}/${questions.length}`;
+            
+            // Mensagem personalizada baseada na pontuação
+            if (score === questions.length) {
+                scoreMessage.textContent = "Parabéns! Você é um expert em saúde bucal!";
+            } else if (score >= questions.length * 0.7) {
+                scoreMessage.textContent = "Muito bom! Você conhece bastante sobre saúde bucal, mas pode aprender ainda mais!";
+            } else if (score >= questions.length * 0.5) {
+                scoreMessage.textContent = "Bom trabalho! Mas ainda pode aprender mais sobre saúde bucal.";
+            } else {
+                scoreMessage.textContent = "Que tal marcar uma consulta para aprender mais sobre saúde bucal?";
+            }
+        }
+
+        // Atualizar barra de progresso
+        function updateProgressBar() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // Compartilhar via WhatsApp
+        shareWhatsapp.addEventListener('click', () => {
+            const text = `Acabei de jogar o Quiz Odontológico do Dr Ednando Oliveira e fiz ${score}/${questions.length} pontos! Teste seus conhecimentos também.`;
+            const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        });
+
+        // Compartilhar no Instagram (simulação - na prática precisa da API)
+        shareInstagram.addEventListener('click', () => {
+            alert('Para compartilhar no Instagram, primeiro baixe a imagem do resultado e depois compartilhe através do app.');
+            downloadResult();
+        });
+
+        // Baixar resultado como imagem
+        downloadBtn.addEventListener('click', downloadResult);
+
+        function downloadResult() {
+            const ctx = canvas.getContext('2d');
+            
+            // Limpar canvas
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Adicionar conteúdo
+            ctx.fillStyle = '#00838f';
+            ctx.font = 'bold 28px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Quiz Odontológico - Resultado', canvas.width / 2, 50);
+            
+            ctx.fillStyle = '#006064';
+            ctx.font = '24px Arial';
+            ctx.fillText(`Sua pontuação: ${score}/${questions.length}`, canvas.width / 2, 100);
+            
+            // Mensagem personalizada
+            let message = "";
+            if (score === questions.length) {
+                message = "Parabéns! Expert em saúde bucal!";
+            } else if (score >= questions.length * 0.7) {
+                message = "Muito bom conhecimento!";
+            } else if (score >= questions.length * 0.5) {
+                message = "Bom trabalho!";
+            } else {
+                message = "Aprenda mais sobre saúde bucal!";
+            }
+            
+            ctx.font = '20px Arial';
+            ctx.fillText(message, canvas.width / 2, 140);
+            
+            // Informações do consultório
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 22px Arial';
+            ctx.fillText('Dr. Ednando Oliveira Odontologia Integrada', canvas.width / 2, 200);
+            
+            ctx.font = '18px Arial';
+            ctx.fillText('Agende sua consulta:', canvas.width / 2, 230);
+            ctx.fillText('(85) 99414-6080', canvas.width / 2, 260);
+            
+            // Adicionar um elemento visual
+            ctx.strokeStyle = '#00838f';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, 330, 40, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            ctx.font = '40px Arial';
+            ctx.fillStyle = '#00838f';
+            ctx.fillText('☺', canvas.width / 2 - 15, 345);
+            
+            // Converter canvas para imagem e fazer download
+            try {
+                const dataURL = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.download = 'resultado-quiz-odontologico.png';
+                link.href = dataURL;
+                link.click();
+            } catch (err) {
+                console.error('Erro ao gerar imagem:', err);
+                alert('Não foi possível baixar a imagem. Tente novamente.');
+            }
+        }
+    </script>
+</body>
+</html>
